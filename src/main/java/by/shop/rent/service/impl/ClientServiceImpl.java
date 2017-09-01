@@ -1,0 +1,82 @@
+package by.shop.rent.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import by.shop.rent.beans.ClientData;
+import by.shop.rent.dao.ClientDAO;
+import by.shop.rent.dao.exception.DAOException;
+import by.shop.rent.dao.factory.DAOFactory;
+import by.shop.rent.service.ClientService;
+import by.shop.rent.service.exception.EmptyFieldsException;
+import by.shop.rent.service.exception.LoginException;
+import by.shop.rent.service.exception.ServiceException;
+
+@Service
+public class ClientServiceImpl implements ClientService{
+	
+	DAOFactory daoObjectFactory = DAOFactory.getInstance();
+	
+	@Autowired
+	ClientDAO clientDAO = daoObjectFactory.getClientDAOImpl();
+	
+/*	@Override
+	public ClientData getClientData(String login, String password) throws ServiceException, LoginException {
+		DAOFactory daoObjectFactory = DAOFactory.getInstance();
+		ClientDAO clientsDAO = daoObjectFactory.getClientDAOImpl();
+
+		try {
+			ClientData clientData = clientsDAO.formClientData(login, password);
+			if (clientData == null) {
+				throw new LoginException("wrong login or password");
+			}
+			return clientData;
+
+		} catch (DAOException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void checkEmptyFields(ClientData clientData) throws EmptyFieldsException {
+		if (isEmptyFieldExist(clientData)) {
+			throw new EmptyFieldsException("empty fields found");
+		}
+	}*/
+	
+	@Override
+	public void checkLogin(String login) throws ServiceException, LoginException {
+
+
+		try {
+			System.out.println("in client service");
+			if (clientDAO.isClientExist(login)) {
+				throw new LoginException("login already in use");
+			}
+		} catch (DAOException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}
+	}
+	
+	@Override
+	public void registerClient () throws ServiceException {
+		try {
+			clientDAO.addNewClient();
+		} catch (DAOException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}
+	}
+	
+	/*private boolean isEmptyFieldExist (ClientData clientData) {
+		if (clientData.getName().equals("") | 
+				clientData.getSurname().equals("") |
+				clientData.getEmail().equals("") |
+				clientData.getPhone().equals("") |
+				clientData.getLogin().equals("") |
+				clientData.getPassword().equals("")) {
+			return true;
+		}
+		return false;
+	}*/
+
+}

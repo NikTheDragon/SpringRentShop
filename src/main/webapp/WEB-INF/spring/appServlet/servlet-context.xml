@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<mvc:annotation-driven />
+
+	<context:annotation-config />
+
+	<mvc:resources mapping="/resources/**" location="/WEB-INF/resources/" />
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<context:component-scan base-package="by.shop.rent" />
+	<context:component-scan base-package="by.shop.rent.service" />
+	<context:component-scan base-package="by.shop.rent.service.impl" />
+	<context:component-scan base-package="by.shop.rent.dao" />
+	<context:component-scan base-package="by.shop.rent.dao.impl" />
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/*" />
+			<ref bean="localeChangeInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean id="dataSource" destroy-method="close"
+		class="org.apache.commons.dbcp.BasicDataSource" p:driverClassName="com.mysql.jdbc.Driver"
+		p:url="jdbc:mysql://localhost:3306/sportshop?useSSL=false" p:username="root"
+		p:password="leevth" p:initialSize="3" />
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+		p:basename="/WEB-INF/locales/messages" p:defaultEncoding="UTF-8" />
+
+	<bean id="localeChangeInterceptor"
+		class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"
+		p:paramName="lang" />
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver"
+		name="localeResolver" p:defaultLocale="ru" />
+
+</beans>
