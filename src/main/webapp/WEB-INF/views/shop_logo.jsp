@@ -39,7 +39,7 @@
         		<input class="old" type="submit" value="${main}" style="width: 150Px">
         	</c:when>
         	<c:otherwise>
-            	<form:form action="index" method="GET">
+            	<form:form action="index">
             	    <input class="new" type="submit" value="${main}" style="width: 150Px">
             	</form:form>
        		</c:otherwise>

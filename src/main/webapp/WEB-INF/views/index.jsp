@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<%@ page session="true"%>
 <!DOCTYPE>
 
 <html>
@@ -38,29 +40,38 @@
         </td>
 
         <td bgcolor="d0d0d0">
-            <form action="Controller" method="post">
+            <form action="<c:url value='/j_spring_security_check' />" method="post">
                 <table border="0" bgcolor="d0d0d0" width="100%">
                     <tr align="center">
-                        <td width="100%"><input type="text" name="login" placeholder="login" value="" size="20"><br>${login_text}</td>
+                        <td width="100%"><input type="text" name="j_username" placeholder="login" value="" size="20"><br>${login_text}</td>
                     </tr>
                     <tr align="center">
-                        <td width="100%"><input type="password" name="password" placeholder="password" value="" size="20"><br>${password_text}
+                        <td width="100%"><input type="password" name="j_password" placeholder="password" value="" size="20"><br>${password_text}
                         </td>
                     </tr>
                 </table>
+
+<sec:authorize access="isAuthenticated()">
+    authenticated as <sec:authentication property="principal.authorities" /> 
+</sec:authorize>
+
+<sec:authorize access="hasRole('ROLE_USER')" var= "isUSer"/>
+<c:if test= "${not isUSer}">
+<p>not autorized</p></c:if>
+<c:if test= "${isUSer}">
+<p>autorized</p></c:if>
 
 
                 <table border="0" bgcolor="d0d0d0" width="100%">
                     <tr align="center">
                         <td>
-                            <input type="hidden" name="command" value="login_client"/>
                             <input class="new" type="submit" value="${login_button}" style="width: 120Px">
                         </td>
                     </tr>
                 </table>
             </form>
 
-            <form:form action="reg_client" method="POST">
+            <form:form action="reg_client">
                 <table border="0" bgcolor="d0d0d0" width="100%">
                     <tr align="center">
                         <td align="center">
@@ -72,6 +83,9 @@
         </td>
     </tr>
 </table>
+
+
+
 
 </body>
 </html>

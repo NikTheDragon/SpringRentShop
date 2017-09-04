@@ -14,14 +14,23 @@ public class HomeController {
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String home(Locale locale, Model model) {
+
+		
+		
 		return "index";
 	}
 
-	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	@RequestMapping(value = "/index", method = { RequestMethod.GET, RequestMethod.POST })
 	public String index(Locale locale, Model model) {
 
 		return "index";
+	}
+	
+	@RequestMapping(value = "/403", method = RequestMethod.GET)
+	public String accesssDenied() {
+	
+	  return "403";
 	}
 }

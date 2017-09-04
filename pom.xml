@@ -16,6 +16,7 @@
 		<hibernate-validator-version>6.0.1.Final</hibernate-validator-version>
 		<sqlite-jdbc-version>3.16.1</sqlite-jdbc-version>
 		<commons-dbcp-version>1.4</commons-dbcp-version>
+		<spring.security.version>4.2.3.RELEASE</spring.security.version>
 	</properties>
 
 	<dependencies>
@@ -67,6 +68,29 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
+		 <!--To start using the security namespace in your application context-->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
+		<!--Provides Spring Security’s JSP tag implementations.-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring.security.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
