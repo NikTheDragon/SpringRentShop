@@ -2,6 +2,9 @@ package by.shop.rent.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import by.shop.rent.beans.Item;
 import by.shop.rent.dao.EquipmentDAO;
 import by.shop.rent.dao.exception.DAOException;
@@ -10,9 +13,15 @@ import by.shop.rent.dao.factory.DAOFactory;
 import by.shop.rent.service.EquipmentService;
 import by.shop.rent.service.exception.ServiceException;
 
+@Service
 public class EquipmentServiceImpl implements EquipmentService {
+	DAOFactory daoObjectFactory = DAOFactory.getInstance();
 	
-	@Override
+	@Autowired
+	EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
+	
+	
+	/*@Override
 	public boolean isInCart(List<Integer> cart, int id) {
 		for (Integer cartIDs : cart) {
 			if (cartIDs == id) {
@@ -46,16 +55,13 @@ public class EquipmentServiceImpl implements EquipmentService {
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
-	}
+	}*/
 	
 	@Override
 	public List<String> formCategoryElementList() throws ServiceException {
-		DAOFactory daoObjectFactory = DAOFactory.getInstance();
-		EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
-
 		try {
-			List<String> folderList = equipmentDAO.formFolderElementsList();
-			return folderList;
+			List<String> categoryList = equipmentDAO.formCategoryElementsList();
+			return categoryList;
 
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
@@ -63,19 +69,16 @@ public class EquipmentServiceImpl implements EquipmentService {
 	}
 	
 	@Override
-	public List<Item> formEquipmentList(String folder) throws ServiceException {
-		DAOFactory daoObjectFactory = DAOFactory.getInstance();
-		EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
-
+	public List<Item> formEquipmentList(String category) throws ServiceException {
 		try {
-			List<Item> equipmentList = equipmentDAO.formEquipmentList(folder);
+			List<Item> equipmentList = equipmentDAO.formEquipmentList(category);
 			return equipmentList;
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
 	}
 	
-	@Override
+	/*@Override
 	public List<Item> formClientEquipment(int clientId) throws ServiceException {
 		DAOFactory daoObjectFactory = DAOFactory.getInstance();
 		EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
@@ -98,6 +101,6 @@ public class EquipmentServiceImpl implements EquipmentService {
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
-	}
+	}*/
 
 }

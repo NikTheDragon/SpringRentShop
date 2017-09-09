@@ -24,13 +24,13 @@ import by.shop.rent.service.factory.ServiceFactory;
 @SessionAttributes("user")
 public class RegisterController {
 	ServiceFactory serviceFactory = ServiceFactory.getInstance();
-	
+
 	@Autowired
 	ClientService clientService = serviceFactory.getClientServiceImpl();
 
 	@Autowired
 	User user;
-	
+
 	@RequestMapping(value = "/reg_client", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView register(Locale locale) {
 
@@ -41,20 +41,17 @@ public class RegisterController {
 	public String showUser(@Valid @ModelAttribute("user") @Autowired User user, BindingResult bindingResult,
 			Locale locale, Model model) {
 
-		if (bindingResult.hasErrors()) {
-			return "reg_client";
+		if (!bindingResult.hasErrors()) {
+			try {
+				clientService.checkLogin(user.getLogin());
+				clientService.registerClient();
+				bindingResult.rejectValue("message", "registration.done", "reg done");
+			} catch (LoginException e) {
+				bindingResult.rejectValue("message", "registration.invalid.login", "login taken");
+			} catch (ServiceException e) {
+				model.addAttribute("message", e.getMessage());
+			}
 		}
-
-		try {
-			clientService.checkLogin(user.getLogin());
-			clientService.registerClient();
-			bindingResult.rejectValue("message", "registration.done", "reg done");
-		} catch (LoginException e) {
-			bindingResult.rejectValue("message", "registration.invalid.login", "login taken");
-		} catch (ServiceException e) {
-			model.addAttribute("message", e.getMessage());
-		}
-
 		return "reg_client";
 	}
 

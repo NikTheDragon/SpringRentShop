@@ -4,7 +4,10 @@ import by.shop.rent.beans.ClientData;
 import by.shop.rent.beans.User;
 import by.shop.rent.dao.ClientDAO;
 import by.shop.rent.dao.exception.DAOException;
-import by.shop.rent.dao.objects.Info;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class ClientDAOImpl implements ClientDAO {
-
 	private final static Logger LOGGER = Logger.getLogger(ClientDAOImpl.class);
 	private JdbcTemplate jdbcTemplate;
 
@@ -24,54 +26,59 @@ public class ClientDAOImpl implements ClientDAO {
 	public void setDtaSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-	
+
 	@Autowired
 	User user;
 
 	final String COUNT_CLIENTS = "SELECT COUNT(*) FROM clients WHERE login = ?";
-	// final String GET_CLIENT_INFORMATION = "SELECT * FROM clients WHERE login=? AND password=?";
+	final String GET_CLIENT_INFORMATION = "SELECT * FROM clients WHERE login=?";
 	final String ADD_CLIENT = "INSERT INTO clientsss (name,surname,email,phone,login,password,status) VALUES (?,?,?,?,?,?,?)";
 
 	@Override
 	public boolean isClientExist(String login) throws DAOException {
-		System.out.println("in clients dao");
-		System.out.println("login=" + login);
-
 		int clients = jdbcTemplate.queryForObject(COUNT_CLIENTS, Integer.class, login);
 		if (clients == 0) {
 			return false;
 		}
-		System.out.println("user="+user);
+		System.out.println("user=" + user);
 
 		return true;
 	}
 
-	/*@Override
-	public ClientData formClientData(String login, String password) throws DAOException {
-		final int LOGIN = 1;
-		final int PASSWORD = 2;
+	@Override
+	public User getUserInfo(String login) throws DAOException {
+		List<User> list;
+		list = jdbcTemplate.query(GET_CLIENT_INFORMATION, new Object[] { login }, new RowMapper<User>() {
 
-		try (Connection connection = dataSource.getConnection()) {
-			PreparedStatement ps = connection.prepareStatement(GET_CLIENT_INFORMATION);
-			ps.setString(LOGIN, login);
-			ps.setString(PASSWORD, password);
+			@Override
+			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+				final int ID = 1;
+				final int NAME = 2;
+				final int SURNAME = 3;
+				final int EMAIL = 4;
+				final int PHONE = 5;
+				final int LOGIN = 6;
+				final int PASSWORD = 7;
+				final int STATUS = 8;
 
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
+				User user = new User();
 
-					return new ClientData.Builder().id(rs.getInt(1)).name(rs.getString(2)).surname(rs.getString(3))
-							.email(rs.getString(4)).phone(rs.getString(5)).login(rs.getString(6))
-							.password(rs.getString(7)).status(rs.getString(8)).build();
-				}
+				user.setId(rs.getInt(ID));
+				user.setName(rs.getString(NAME));
+				user.setSurname(rs.getString(SURNAME));
+				user.setEmail(rs.getString(EMAIL));
+				user.setPhone(rs.getString(PHONE));
+				user.setLogin(rs.getString(LOGIN));
+				user.setPassword(rs.getString(PASSWORD));
+				user.setStatus(rs.getString(STATUS));
+				
+				return user;
 			}
-			return null;
+		});
 
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new DAOException("Exception in formClientData", e);
-		}
+		return list.get(0);
 	}
-*/
+
 	@Override
 	public void addNewClient() throws DAOException {
 		System.out.println("adding new client");

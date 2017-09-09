@@ -26,12 +26,6 @@
 
 <body>
 
-<script language="Javascript">
-    function ChangeColor(text) {
-        document.getElementById(text).style.backgroundColor = "white";
-    }
-</script>
-
 <jsp:include page="shop_logo.jsp"/>
 
 <br>

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import by.shop.rent.beans.ClientData;
+import by.shop.rent.beans.User;
 import by.shop.rent.dao.ClientDAO;
 import by.shop.rent.dao.exception.DAOException;
 import by.shop.rent.dao.factory.DAOFactory;
@@ -14,29 +15,26 @@ import by.shop.rent.service.exception.ServiceException;
 
 @Service
 public class ClientServiceImpl implements ClientService{
-	
 	DAOFactory daoObjectFactory = DAOFactory.getInstance();
 	
 	@Autowired
 	ClientDAO clientDAO = daoObjectFactory.getClientDAOImpl();
 	
-/*	@Override
-	public ClientData getClientData(String login, String password) throws ServiceException, LoginException {
-		DAOFactory daoObjectFactory = DAOFactory.getInstance();
-		ClientDAO clientsDAO = daoObjectFactory.getClientDAOImpl();
+	@Override
+	public User getUserInfo(String login) throws ServiceException, LoginException {
 
 		try {
-			ClientData clientData = clientsDAO.formClientData(login, password);
-			if (clientData == null) {
+			User userInfo = clientDAO.getUserInfo(login);
+			if (userInfo == null) {
 				throw new LoginException("wrong login or password");
 			}
-			return clientData;
+			return userInfo;
 
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
 	}
-
+/*
 	@Override
 	public void checkEmptyFields(ClientData clientData) throws EmptyFieldsException {
 		if (isEmptyFieldExist(clientData)) {

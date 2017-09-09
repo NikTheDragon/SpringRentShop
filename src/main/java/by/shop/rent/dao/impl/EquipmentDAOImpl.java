@@ -6,6 +6,10 @@ import by.shop.rent.dao.exception.DAOException;
 import by.shop.rent.dao.exception.EquipmentAlreadyExistsException;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -15,20 +19,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class EquipmentDAOImpl implements EquipmentDAO {
+	private final static Logger LOGGER = Logger.getLogger(EquipmentDAOImpl.class);
+	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	public void setDtaSource(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
 
-    private final static Logger LOGGER = Logger.getLogger(EquipmentDAOImpl.class);
-
-    private DataSource dataSource;
-
+	@Autowired
+	Item item;
+	
 	final String FORM_EQUIPMENT_DATA = "SELECT e.*, r.client_id,types.folder FROM equipment e LEFT OUTER JOIN rented_items r ON e.id=r.equipment_id,types WHERE e.type=types.type AND types.folder LIKE ?";
-	final String FORM_FOLDER_DATA = "SELECT DISTINCT folder FROM types";
+	final String FORM_CATEGORY_LIST = "SELECT DISTINCT folder FROM types";
 	final String FORM_CART_LIST = "SELECT * FROM equipment WHERE id=?";
 	final String ADD_RENTED_ITEM = "INSERT INTO rented_items (client_id, equipment_id, date, length) VALUES (?,?,?,?)";
 	final String CLIENT_ITEMS = "SELECT * FROM equipment, rented_items WHERE equipment.id=rented_items.equipment_id AND rented_items.client_id=?";
 	final String REMOVE_RENTED_ITEM = "DELETE FROM rented_items WHERE client_id=? AND equipment_id=?";
 
-    @Override
+   /* @Override
     public void removeRentedEquipment(int clientId, int equipmentId) throws DAOException {
         final int CLIENTS_ID = 1;
         final int EQUIPMENT_ID = 2;
@@ -145,66 +156,47 @@ public class EquipmentDAOImpl implements EquipmentDAO {
         	LOGGER.error(e.getMessage(), e);
             throw new DAOException("Exception in findCartItems", e);
         }
-    }
+    }*/
 
-    @Override
-    public List<Item> formEquipmentList(String folder) throws DAOException {
-        final int ID = 1;
-        final int TYPE = 2;
-        final int NAME = 3;
-        final int DESCRIPTION = 4;
-        final int MANUFACTURER = 5;
-        final int COST = 6;
-        final int IMG = 7;
-        final int CLIENT_ID = 8;
-        final int FOLDER = 1;
+	@Override
+	public List<Item> formEquipmentList(String category) throws DAOException {
+		final int ID = 1;
+		final int TYPE = 2;
+		final int NAME = 3;
+		final int DESCRIPTION = 4;
+		final int MANUFACTURER = 5;
+		final int COST = 6;
+		final int IMG = 7;
+		final int CLIENT_ID = 8;
+		
+		List<Item> items = jdbcTemplate.query(FORM_EQUIPMENT_DATA, new Object[] { category }, new RowMapper<Item>() {
 
-        List<Item> items = new ArrayList<>();
-
-		try (Connection connection = dataSource.getConnection()) {
-			PreparedStatement ps = connection.prepareStatement(FORM_EQUIPMENT_DATA);
-			ps.setString(FOLDER, folder);
-			try (ResultSet rs = ps.executeQuery()) {
-
-				while (rs.next()) {
-					Item item = new Item.Builder().
-							id(rs.getInt(ID)).
-							name(rs.getString(NAME)).
-							type(rs.getString(TYPE)).
-							description(rs.getString(DESCRIPTION)).
-							manufacturer(rs.getString(MANUFACTURER)).
-							price(rs.getInt(COST)).
-							img(rs.getString(IMG)).
-							owner(rs.getInt(CLIENT_ID)).build();
-					items.add(item);
-				}
-
-				return items;
+			@Override
+			public Item mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Item item = new Item();
+				
+				item.setId(rs.getInt(ID));
+				item.setName(rs.getString(NAME));
+				item.setType(rs.getString(TYPE));
+				item.setDescription(rs.getString(DESCRIPTION));
+				item.setManufacturer(rs.getString(MANUFACTURER));
+				item.setPrice(rs.getInt(COST));
+				item.setImg(rs.getString(IMG));
+				item.setOwner(rs.getInt(CLIENT_ID));
+				
+				return item;
 			}
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new DAOException("Exception in formItemList", e);
-		}
+		});
+
+		return items;
 	}
 
 	@Override
-	public List<String> formFolderElementsList() throws DAOException {
-		final int TYPE = 1;
-		List<String> folderElements = new ArrayList<>();
+	public List<String> formCategoryElementsList() throws DAOException {
+		List<String> categoryElements = new ArrayList<>();
 
-		try (Connection connection = dataSource.getConnection()) {
-			PreparedStatement ps = connection.prepareStatement(FORM_FOLDER_DATA);
-			try (ResultSet rs = ps.executeQuery()) {
+		categoryElements = jdbcTemplate.queryForList(FORM_CATEGORY_LIST, String.class);
 
-				while (rs.next()) {
-					folderElements.add(rs.getString(TYPE));
-				}
-
-				return folderElements;
-			}
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new DAOException("Exception in formFolderElementsList", e);
-		}
+		return categoryElements;
 	}
 }
