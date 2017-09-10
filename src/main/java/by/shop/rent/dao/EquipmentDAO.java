@@ -9,7 +9,7 @@ import by.shop.rent.dao.exception.EquipmentAlreadyExistsException;
 public interface EquipmentDAO {
 
 	//void removeRentedEquipment(int clientId, int equipmentId) throws DAOException;
-	//List<Item> findClientEquipment (int clientId) throws DAOException;
+	List<Item> getUserEquipment (int clientId) throws DAOException;
 	//void addRentedEquipment(int clientId, int equipmentId, int days) throws DAOException, EquipmentAlreadyExistsException;
 	//List<Item> findCartEquipment(List<Integer> cart) throws DAOException;
 	List<Item> formEquipmentList(String category) throws DAOException;

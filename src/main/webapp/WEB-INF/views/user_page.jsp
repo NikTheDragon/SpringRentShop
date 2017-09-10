@@ -4,33 +4,33 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <!DOCTYPE>
+
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Client page</title>
-<link href="<c:url value="/resources/css/mix.css"/>" rel="stylesheet">
-
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Client page</title>
+	<link href="<c:url value="/resources/css/mix.css"/>" rel="stylesheet">
 </head>
 <body>
 
-<jsp:include page="shop_logo.jsp">
-	<jsp:param name="linked_page" value="index_page" />
-</jsp:include>
+	<jsp:include page="shop_logo.jsp">
+		<jsp:param name="active_main_button" value="false" />
+	</jsp:include>
 
 	<br>
-	
+
 	<table border="0" bgcolor="ffffff" width="100%">
 		<tr align="center">
 			<td>Категория:
-			<form action="user_page" method="get">
-				<select name="line" size="1">
-					<option value="%">*</option>
-                	<c:forEach var="line" items="${category}">
-                	<option value="${line}">${line}</option>
-                	</c:forEach>
-            	</select>
-            	<input class="new" type="submit" value="выбрать"/>
-            </form>
+				<form action="user_page" method="get">
+					<select name="line" size="1">
+						<option value="%">*</option>
+						<c:forEach var="line" items="${category}">
+							<option value="${line}">${line}</option>
+						</c:forEach>
+					</select> 
+					<input class="new" type="submit" value="выбрать" />
+				</form>
 			</td>
 		</tr>
 	</table>

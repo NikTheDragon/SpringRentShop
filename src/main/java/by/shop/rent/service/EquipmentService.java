@@ -11,6 +11,6 @@ public interface EquipmentService {
 	//List<Item> formCartEquipment(List<Integer> cart) throws ServiceException;
 	List<String> formCategoryElementList() throws ServiceException;
 	List<Item> formEquipmentList(String ctegory) throws ServiceException;
-	//List<Item> formClientEquipment(int clientId) throws ServiceException;
+	List<Item> formUserEquipmentList(int clientId) throws ServiceException;
 	//void removeRentedEquipment(int clientId, int equipmentId) throws ServiceException;
 }

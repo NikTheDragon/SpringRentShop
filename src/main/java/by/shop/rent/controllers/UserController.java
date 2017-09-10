@@ -39,8 +39,9 @@ public class UserController {
 	@Autowired
 	User user;
 
-	@RequestMapping(value = "/user/user_page", method = { RequestMethod.GET, RequestMethod.POST })
-	public String userPage(@RequestParam(value = "line", defaultValue="%", required = false) String line, Model model, Locale locale) {
+	@RequestMapping(value = { "/user/user_page", "/user/index"}, method = { RequestMethod.GET, RequestMethod.POST })
+	public String userPage(@RequestParam(value = "line", defaultValue = "%", required = false) String line, Model model,
+			Locale locale) {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (!(auth instanceof AnonymousAuthenticationToken)) {
@@ -49,20 +50,30 @@ public class UserController {
 
 			try {
 				user = clientService.getUserInfo(userDetail.getUsername());
-				List<String> category = equipmentService.formCategoryElementList();
+				List<String> categoryElementsList = equipmentService.formCategoryElementList();
 				List<Item> equipmentList = equipmentService.formEquipmentList(line);
 
 				model.addAttribute("user", user);
-				model.addAttribute("category", category);
+				model.addAttribute("category", categoryElementsList);
 				model.addAttribute("equipment", equipmentList);
 
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			} catch (LoginException e) {
+			} catch (ServiceException | LoginException e) {
 				e.printStackTrace();
 			}
 		}
 
 		return "user_page";
+	}
+	
+	@RequestMapping(value = "/user/user_items", method = { RequestMethod.GET, RequestMethod.POST })
+	public String userItems (Model model, Locale locale) {
+		try{
+			List<Item> clientItems = equipmentService.formUserEquipmentList(user.getId());
+			model.addAttribute("items", clientItems);
+			
+		} catch (Exception e){}
+		
+		
+		return "user_items";
 	}
 }

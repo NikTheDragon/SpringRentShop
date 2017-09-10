@@ -36,7 +36,7 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 	final String FORM_CATEGORY_LIST = "SELECT DISTINCT folder FROM types";
 	final String FORM_CART_LIST = "SELECT * FROM equipment WHERE id=?";
 	final String ADD_RENTED_ITEM = "INSERT INTO rented_items (client_id, equipment_id, date, length) VALUES (?,?,?,?)";
-	final String CLIENT_ITEMS = "SELECT * FROM equipment, rented_items WHERE equipment.id=rented_items.equipment_id AND rented_items.client_id=?";
+	final String USER_ITEMS = "SELECT * FROM equipment, rented_items WHERE equipment.id=rented_items.equipment_id AND rented_items.client_id=?";
 	final String REMOVE_RENTED_ITEM = "DELETE FROM rented_items WHERE client_id=? AND equipment_id=?";
 
    /* @Override
@@ -54,10 +54,10 @@ public class EquipmentDAOImpl implements EquipmentDAO {
         	LOGGER.error(e.getMessage(), e);
             throw new DAOException("Exception in removeRentedItem", e);
         }
-    }
+    }*/
 
     @Override
-    public List<Item> findClientEquipment(int clientId) throws DAOException {
+    public List<Item> getUserEquipment(int clientId) throws DAOException {
         final int ID = 1;
         final int TYPE = 2;
         final int NAME = 3;
@@ -65,36 +65,29 @@ public class EquipmentDAOImpl implements EquipmentDAO {
         final int MANUFACTURER = 5;
         final int COST = 6;
         final int IMG = 7;
+        
+        List<Item> userItems = jdbcTemplate.query(USER_ITEMS, new Object[] { clientId }, new RowMapper<Item>() {
 
-        List<Item> clientItems = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(CLIENT_ITEMS);
-            ps.setInt(ID, clientId);
-            
-			try (ResultSet rs = ps.executeQuery()) {
-
-				while (rs.next()) {
-					Item item = new Item.Builder().
-                        id(rs.getInt(ID)).
-                        name(rs.getString(NAME)).
-                        type(rs.getString(TYPE)).
-                        description(rs.getString(DESCRIPTION)).
-                        manufacturer(rs.getString(MANUFACTURER)).
-                        price(rs.getInt(COST)).
-                        img(rs.getString(IMG)).
-                        owner(0).build();
-					clientItems.add(item);
-				}
-				return clientItems;
+			@Override
+			public Item mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Item item = new Item();
+				
+				item.setId(rs.getInt(ID));
+				item.setName(rs.getString(NAME));
+				item.setType(rs.getString(TYPE));
+				item.setDescription(rs.getString(DESCRIPTION));
+				item.setManufacturer(rs.getString(MANUFACTURER));
+				item.setPrice(rs.getInt(COST));
+				item.setImg(rs.getString(IMG));
+				
+				return item;
 			}
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new DAOException("Exception in findClientItems", e);
-		}
+		});
+
+		return userItems;
 	}
 
-    @Override
+ /*   @Override
     public void addRentedEquipment(int clientId, int equipmentId, int days) throws DAOException, EquipmentAlreadyExistsException {
         final int CLIENT_ID = 1;
         final int EQUIPMENT_ID = 2;

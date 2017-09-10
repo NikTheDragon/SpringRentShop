@@ -78,20 +78,17 @@ public class EquipmentServiceImpl implements EquipmentService {
 		}
 	}
 	
-	/*@Override
-	public List<Item> formClientEquipment(int clientId) throws ServiceException {
-		DAOFactory daoObjectFactory = DAOFactory.getInstance();
-		EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
-
+	@Override
+	public List<Item> formUserEquipmentList(int clientId) throws ServiceException {
 		try {
-			return equipmentDAO.findClientEquipment(clientId);
+			return equipmentDAO.getUserEquipment(clientId);
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
 
 	}
 	
-	@Override
+	/*@Override
 	public void removeRentedEquipment(int clientId, int equipmentId) throws ServiceException {
 		DAOFactory daoObjectFactory = DAOFactory.getInstance();
 		EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();

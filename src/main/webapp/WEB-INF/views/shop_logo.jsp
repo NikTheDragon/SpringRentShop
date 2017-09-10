@@ -35,7 +35,7 @@
     <tr align="center" valign="top">
         <td width="33%" height="32">
         <c:choose>
-        	<c:when test="${param.linked_page == 'index_page'}">
+        	<c:when test="${param.active_main_button == 'false'}">
         		<input class="old" type="submit" value="${main}" style="width: 150Px">
         	</c:when>
         	<c:otherwise>

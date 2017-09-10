@@ -26,7 +26,9 @@
 
 <body>
 
-<jsp:include page="shop_logo.jsp"/>
+<jsp:include page="shop_logo.jsp">
+	<jsp:param name="active_main_button" value="true" />
+</jsp:include>
 
 <br>
 
