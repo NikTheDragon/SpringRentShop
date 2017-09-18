@@ -50,10 +50,9 @@
 					<tr align="center">
 						<td colspan="3" width="80%">${field.description}</td>
 						<td>
-							<form action="Controller" target="dummyframe" method="post">
-							<input type="hidden" name="command" value="add_to_cart" /> 
+							<form action="add_to_cart" method="POST">
 							<c:if test = "${field.owner == '0'}">
-								<input type="image" name="cart" value="${field.id}" src="<c:url value="/resources/img/icon_cart.gif"/>"width="32" height="32">
+								<input type="image" name="itemID" value="${field.id}" src="<c:url value="/resources/img/icon_cart.gif"/>"width="32" height="32">
 							</c:if>
 							<c:if test = "${field.owner != '0'}">
 								 <p align="center">Товар недоступен</p>
@@ -67,7 +66,7 @@
 			</td>
 			
         <jsp:include page="right_menu.jsp">
-        <jsp:param name="linked_page" value="client_page" />
+        	<jsp:param name="linked_page" value="client_page" />
         </jsp:include>
         
     </tr>

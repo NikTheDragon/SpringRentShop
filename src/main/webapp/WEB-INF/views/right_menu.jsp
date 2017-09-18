@@ -38,15 +38,13 @@
             	<p><input class="old" type="submit" name="B3" value="Корзина" style="width: 120Px"></p>
         	</c:when>
         	<c:otherwise>
-            	<form action="Controller" method="post">
-	        		<input type="hidden" name="command"	value="show_cart" />
+            	<form action="user_cart" method="POST">
     	        	<p><input class="new" type="submit" name="B3" value="Корзина" style="width: 120Px"></p>
         		</form>
 	        </c:otherwise>
         </c:choose>
         
-        <form action="Controller" method="post">
-        	<input type="hidden" name="command"	value="logout_client" />
+        <form action="<c:url value='/logout' />" method="POST">
             <p><input class="new" type="submit" value="Выход" style="width: 120Px"></p>
         </form>
 	</td>

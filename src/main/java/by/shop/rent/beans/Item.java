@@ -3,8 +3,9 @@ package by.shop.rent.beans;
 import org.springframework.stereotype.Component;
 
 /**
- * Class stored items data Used builder constructor
+ * Class stored items data
  */
+
 @Component("item")
 public class Item {
 	private int id;

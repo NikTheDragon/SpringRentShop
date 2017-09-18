@@ -109,10 +109,10 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 			LOGGER.error(e.getMessage(), e);
             throw new DAOException("Exception in addRentedItem", e);
         }
-    }
+    }*/
 
     @Override
-    public List<Item> findCartEquipment(List<Integer> cart) throws DAOException {
+    public List<Item> findCartEquipment(List<String> cart) throws DAOException {
         final int ID = 1;
         final int TYPE = 2;
         final int NAME = 3;
@@ -120,36 +120,38 @@ public class EquipmentDAOImpl implements EquipmentDAO {
         final int MANUFACTURER = 5;
         final int COST = 6;
         final int IMG = 7;
-
+		
         List<Item> items = new ArrayList<>();
+        
+		try {
+			for (String id : cart) {
 
-        try (Connection connection = dataSource.getConnection()) {
-        	PreparedStatement ps = connection.prepareStatement(FORM_CART_LIST);
-        	
-			for (Integer id : cart) {
-				ps.setInt(ID, id);
-				try (ResultSet rs = ps.executeQuery()) {
+				item = jdbcTemplate.queryForObject(FORM_CART_LIST, new Object[] { id }, new RowMapper<Item>() {
 
-					while (rs.next()) {
-						Item item = new Item.Builder().
-							id(rs.getInt(ID)).
-							name(rs.getString(NAME)).
-							type(rs.getString(TYPE)).
-							description(rs.getString(DESCRIPTION)).
-							manufacturer(rs.getString(MANUFACTURER)).
-							price(rs.getInt(COST)).
-							img(rs.getString(IMG)).
-							owner(0).build();
-						items.add(item);
+					@Override
+					public Item mapRow(ResultSet rs, int rowNum) throws SQLException {
+						Item item = new Item();
+
+						item.setId(rs.getInt(ID));
+						item.setName(rs.getString(NAME));
+						item.setType(rs.getString(TYPE));
+						item.setDescription(rs.getString(DESCRIPTION));
+						item.setManufacturer(rs.getString(MANUFACTURER));
+						item.setPrice(rs.getInt(COST));
+						item.setImg(rs.getString(IMG));
+
+						return item;
 					}
-				}
+				});
+				items.add(item);
 			}
 			return items;
-		} catch (SQLException e) {
-        	LOGGER.error(e.getMessage(), e);
-            throw new DAOException("Exception in findCartItems", e);
-        }
-    }*/
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new DAOException("Exception in findCartItems", e);
+		}
+	}
 
 	@Override
 	public List<Item> formEquipmentList(String category) throws DAOException {

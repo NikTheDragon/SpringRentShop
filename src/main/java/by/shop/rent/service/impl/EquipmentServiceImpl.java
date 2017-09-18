@@ -43,19 +43,17 @@ public class EquipmentServiceImpl implements EquipmentService {
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
-	}
+	}*/
 	
 	@Override
-	public List<Item> formCartEquipment (List<Integer> cart) throws ServiceException {
-		DAOFactory daoObjectFactory = DAOFactory.getInstance();
-		EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
-				
+	public List<Item> formCartEquipmentList (List<String> cart) throws ServiceException {
+
 		try {
 			return equipmentDAO.findCartEquipment(cart);
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
-	}*/
+	}
 	
 	@Override
 	public List<String> formCategoryElementList() throws ServiceException {

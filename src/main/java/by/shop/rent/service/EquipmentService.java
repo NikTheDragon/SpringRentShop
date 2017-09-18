@@ -8,7 +8,7 @@ import by.shop.rent.service.exception.ServiceException;
 public interface EquipmentService {
 	//boolean isInCart(List<Integer> cart, int id);
 	//void addRentedItem(int clientId, int equipmentId, int days) throws ServiceException;
-	//List<Item> formCartEquipment(List<Integer> cart) throws ServiceException;
+	List<Item> formCartEquipmentList(List<String> cart) throws ServiceException;
 	List<String> formCategoryElementList() throws ServiceException;
 	List<Item> formEquipmentList(String ctegory) throws ServiceException;
 	List<Item> formUserEquipmentList(int clientId) throws ServiceException;
