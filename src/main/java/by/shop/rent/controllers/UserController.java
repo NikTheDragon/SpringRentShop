@@ -2,6 +2,7 @@ package by.shop.rent.controllers;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -109,14 +110,47 @@ public class UserController {
 	public String deleteItem(@RequestParam("itemID") String itemID, Model model, Locale locale) {
 
 		cart.removeItem(itemID);
-		
+
 		try {
 			cartList = equipmentService.formCartEquipmentList(cart.getCart());
 			model.addAttribute("cart", cartList);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		
+
 		return "user_cart";
+	}
+
+	@RequestMapping(value = "user/rent_item", method = { RequestMethod.GET, RequestMethod.POST })
+	public String rentItem(@RequestParam Map<String, String> requestParams, Model model, Locale locale) {
+		String itemID = requestParams.get("itemID");
+		String userID = requestParams.get("userID");
+		String days = requestParams.get("days");
+		
+		try {
+			equipmentService.rentItem(userID, itemID, days);
+			cartList = equipmentService.formCartEquipmentList(cart.getCart());
+			model.addAttribute("cart", cartList);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+
+		return "user_cart";
+	}
+	
+	@RequestMapping(value="user/return_equipment",  method = { RequestMethod.GET, RequestMethod.POST })
+	public String returnEquipment(@RequestParam Map<String, String> requestParams, Model model, Locale locale){
+		String equipmentID = requestParams.get("equipmentID");
+		String clientID = requestParams.get("clientID");
+		
+		try {
+			equipmentService.returnRentedEquipment(clientID, equipmentID);
+			List<Item> clientEquipment = equipmentService.formUserEquipmentList(user.getId());
+			model.addAttribute("items", clientEquipment);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		
+		return "user_items";
 	}
 }

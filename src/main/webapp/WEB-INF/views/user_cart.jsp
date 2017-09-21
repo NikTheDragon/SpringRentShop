@@ -34,8 +34,8 @@
 						<td colspan="3" width="80%">${field.description}</td>
 						<td>
 							<form action="rent_item" method="POST">
-								<input type="hidden" name="item_id" value="${field.id}" />
-								<input type="hidden" name="user_id" value="${user.id}" />
+								<input type="hidden" name="itemID" value="${field.id}" />
+								<input type="hidden" name="userID" value="${user.id}" />
 								<p>срок проката (дней)</p>
 								<select name="days" size="1">
 									<option value="30">30</option>

@@ -32,11 +32,10 @@
 					<tr align="center">
 						<td colspan="3" width="80%">${field.description}</td>
 						<td>
-							<form action="Controller" method="post">
-							<input type="hidden" name="command" value="return_item" />
-							<input type="hidden" name="equipment_id" value="${field.id}" />
-							<input type="hidden" name="client_id" value="${user.id}" />   
-							<input type="submit" name="return_button" value="Оформить взврат" style="width: 120Px">
+							<form action="return_equipment" method="post">
+							<input type="hidden" name="equipmentID" value="${field.id}" />
+							<input type="hidden" name="clientID" value="${user.id}" />   
+							<input type="submit" class="new" name="return_button" value="Оформить взврат" style="width: 120Px">
 							</form>
 						</td>
 					</tr>

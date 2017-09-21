@@ -7,6 +7,7 @@ import by.shop.rent.dao.exception.EquipmentAlreadyExistsException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -39,22 +40,18 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 	final String USER_ITEMS = "SELECT * FROM equipment, rented_items WHERE equipment.id=rented_items.equipment_id AND rented_items.client_id=?";
 	final String REMOVE_RENTED_ITEM = "DELETE FROM rented_items WHERE client_id=? AND equipment_id=?";
 
-   /* @Override
-    public void removeRentedEquipment(int clientId, int equipmentId) throws DAOException {
-        final int CLIENTS_ID = 1;
-        final int EQUIPMENT_ID = 2;
+    @Override
+    public void returnRentedEquipment(String clientID, String equipmentID) throws DAOException {
 
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(REMOVE_RENTED_ITEM);
-            ps.setInt(CLIENTS_ID, clientId);
-            ps.setInt(EQUIPMENT_ID, equipmentId);
-            ps.executeUpdate();
+        try {
+            
+        	jdbcTemplate.update(REMOVE_RENTED_ITEM, clientID, equipmentID);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
         	LOGGER.error(e.getMessage(), e);
             throw new DAOException("Exception in removeRentedItem", e);
         }
-    }*/
+    }
 
     @Override
     public List<Item> getUserEquipment(int clientId) throws DAOException {
@@ -87,29 +84,15 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 		return userItems;
 	}
 
- /*   @Override
-    public void addRentedEquipment(int clientId, int equipmentId, int days) throws DAOException, EquipmentAlreadyExistsException {
-        final int CLIENT_ID = 1;
-        final int EQUIPMENT_ID = 2;
-        final int DATE = 3;
-        final int LENGTH = 4;
-
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(ADD_RENTED_ITEM);
-            ps.setInt(CLIENT_ID, clientId);
-            ps.setInt(EQUIPMENT_ID, equipmentId);
-            ps.setDate(DATE, new java.sql.Date(System.currentTimeMillis()));
-            ps.setInt(LENGTH, days);
-            ps.executeUpdate();
-
-		} catch (SQLException e) {
-			if (e.getErrorCode() == 1062) {
-				throw new EquipmentAlreadyExistsException("duplicated primary key found. Item ID: " + equipmentId);
-			}
-			LOGGER.error(e.getMessage(), e);
-            throw new DAOException("Exception in addRentedItem", e);
-        }
-    }*/
+    @Override
+    public void addRentedEquipment(String clientId, String equipmentId, String days) throws DAOException, EquipmentAlreadyExistsException {
+    	try {
+    		jdbcTemplate.update(ADD_RENTED_ITEM, clientId, equipmentId, new java.sql.Date(System.currentTimeMillis()), days);
+    	} catch (DuplicateKeyException e) {
+    		LOGGER.error(e.getMessage(), e);
+    		throw new EquipmentAlreadyExistsException("duplicated primary key found. Item ID: " + equipmentId);
+    	}
+    }
 
     @Override
     public List<Item> findCartEquipment(List<String> cart) throws DAOException {

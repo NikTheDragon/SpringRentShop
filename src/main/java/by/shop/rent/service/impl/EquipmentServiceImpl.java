@@ -29,21 +29,18 @@ public class EquipmentServiceImpl implements EquipmentService {
 			}
 		}
 		return false;
-	}
+	}*/
 
 	@Override
-	public void addRentedItem(int clientId, int equipmentId, int days) throws ServiceException {
-		DAOFactory daoObjectFactory = DAOFactory.getInstance();
-		EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
-
+	public void rentItem(String userID, String itemID, String days) throws ServiceException {
 		try {
-			equipmentDAO.addRentedEquipment(clientId, equipmentId, days);
+			equipmentDAO.addRentedEquipment(userID, itemID, days);
 		} catch (EquipmentAlreadyExistsException e) {
 			System.out.println("duplicate primary keys found");
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
-	}*/
+	}
 	
 	@Override
 	public List<Item> formCartEquipmentList (List<String> cart) throws ServiceException {
@@ -86,16 +83,13 @@ public class EquipmentServiceImpl implements EquipmentService {
 
 	}
 	
-	/*@Override
-	public void removeRentedEquipment(int clientId, int equipmentId) throws ServiceException {
-		DAOFactory daoObjectFactory = DAOFactory.getInstance();
-		EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
-		
+	@Override
+	public void returnRentedEquipment(String clientId, String equipmentId) throws ServiceException {
 		try {
-			equipmentDAO.removeRentedEquipment(clientId, equipmentId);
+			equipmentDAO.returnRentedEquipment(clientId, equipmentId);
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
-	}*/
+	}
 
 }

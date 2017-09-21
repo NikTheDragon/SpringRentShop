@@ -8,9 +8,9 @@ import by.shop.rent.dao.exception.EquipmentAlreadyExistsException;
 
 public interface EquipmentDAO {
 
-	//void removeRentedEquipment(int clientId, int equipmentId) throws DAOException;
+	void returnRentedEquipment(String clientId, String equipmentId) throws DAOException;
 	List<Item> getUserEquipment (int clientId) throws DAOException;
-	//void addRentedEquipment(int clientId, int equipmentId, int days) throws DAOException, EquipmentAlreadyExistsException;
+	void addRentedEquipment(String clientId, String equipmentId, String days) throws DAOException, EquipmentAlreadyExistsException;
 	List<Item> findCartEquipment(List<String> cart) throws DAOException;
 	List<Item> formEquipmentList(String category) throws DAOException;
 	List<String> formCategoryElementsList() throws DAOException;
