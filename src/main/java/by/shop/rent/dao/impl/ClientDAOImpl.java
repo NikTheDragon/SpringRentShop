@@ -1,6 +1,5 @@
 package by.shop.rent.dao.impl;
 
-import by.shop.rent.beans.ClientData;
 import by.shop.rent.beans.User;
 import by.shop.rent.dao.ClientDAO;
 import by.shop.rent.dao.exception.DAOException;

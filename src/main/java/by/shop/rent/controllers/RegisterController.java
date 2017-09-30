@@ -18,15 +18,13 @@ import by.shop.rent.beans.User;
 import by.shop.rent.service.ClientService;
 import by.shop.rent.service.exception.LoginException;
 import by.shop.rent.service.exception.ServiceException;
-import by.shop.rent.service.factory.ServiceFactory;
 
 @Controller
 @SessionAttributes("user")
 public class RegisterController {
-	ServiceFactory serviceFactory = ServiceFactory.getInstance();
 
 	@Autowired
-	ClientService clientService = serviceFactory.getClientServiceImpl();
+	ClientService clientService;
 
 	@Autowired
 	User user;

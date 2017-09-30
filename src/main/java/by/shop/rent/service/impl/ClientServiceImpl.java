@@ -3,22 +3,18 @@ package by.shop.rent.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import by.shop.rent.beans.ClientData;
 import by.shop.rent.beans.User;
 import by.shop.rent.dao.ClientDAO;
 import by.shop.rent.dao.exception.DAOException;
-import by.shop.rent.dao.factory.DAOFactory;
 import by.shop.rent.service.ClientService;
-import by.shop.rent.service.exception.EmptyFieldsException;
 import by.shop.rent.service.exception.LoginException;
 import by.shop.rent.service.exception.ServiceException;
 
 @Service
 public class ClientServiceImpl implements ClientService{
-	DAOFactory daoObjectFactory = DAOFactory.getInstance();
 	
 	@Autowired
-	ClientDAO clientDAO = daoObjectFactory.getClientDAOImpl();
+	ClientDAO clientDAO;
 	
 	@Override
 	public User getUserInfo(String login) throws ServiceException, LoginException {
@@ -34,13 +30,6 @@ public class ClientServiceImpl implements ClientService{
 			throw new ServiceException(e.getMessage(), e);
 		}
 	}
-/*
-	@Override
-	public void checkEmptyFields(ClientData clientData) throws EmptyFieldsException {
-		if (isEmptyFieldExist(clientData)) {
-			throw new EmptyFieldsException("empty fields found");
-		}
-	}*/
 	
 	@Override
 	public void checkLogin(String login) throws ServiceException, LoginException {

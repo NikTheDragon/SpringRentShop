@@ -16,8 +16,6 @@ public class HomeController {
 
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String home(Locale locale, Model model) {
-
-		
 		
 		return "index";
 	}

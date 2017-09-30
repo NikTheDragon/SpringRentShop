@@ -9,27 +9,14 @@ import by.shop.rent.beans.Item;
 import by.shop.rent.dao.EquipmentDAO;
 import by.shop.rent.dao.exception.DAOException;
 import by.shop.rent.dao.exception.EquipmentAlreadyExistsException;
-import by.shop.rent.dao.factory.DAOFactory;
 import by.shop.rent.service.EquipmentService;
 import by.shop.rent.service.exception.ServiceException;
 
 @Service
 public class EquipmentServiceImpl implements EquipmentService {
-	DAOFactory daoObjectFactory = DAOFactory.getInstance();
 	
 	@Autowired
-	EquipmentDAO equipmentDAO = daoObjectFactory.getEquipmentDAOImpl();
-	
-	
-	/*@Override
-	public boolean isInCart(List<Integer> cart, int id) {
-		for (Integer cartIDs : cart) {
-			if (cartIDs == id) {
-				return true;
-			}
-		}
-		return false;
-	}*/
+	EquipmentDAO equipmentDAO;
 
 	@Override
 	public void rentItem(String userID, String itemID, String days) throws ServiceException {

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,22 +25,24 @@ import by.shop.rent.service.ClientService;
 import by.shop.rent.service.EquipmentService;
 import by.shop.rent.service.exception.LoginException;
 import by.shop.rent.service.exception.ServiceException;
-import by.shop.rent.service.factory.ServiceFactory;
 
 @Controller
 @SessionAttributes("user")
 public class UserController {
-	ServiceFactory serviceFactory = ServiceFactory.getInstance();
-	Cart cart = new Cart();
-	List<String> categoryElementsList;
+	@Resource(name = "cart") 
+	
+	@Autowired
+	Cart cart;
+	
+	List<String> equipmentCategoryList;
 	List<Item> equipmentList;
-	List<Item> cartList;
+	List<Item> cartEquipmentList;
 
 	@Autowired
-	ClientService clientService = serviceFactory.getClientServiceImpl();
+	ClientService clientService;
 
 	@Autowired
-	EquipmentService equipmentService = serviceFactory.getEquipmentServiceImpl();
+	EquipmentService equipmentService;
 
 	@Autowired
 	User user;
@@ -54,11 +58,11 @@ public class UserController {
 
 			try {
 				user = clientService.getUserInfo(userDetail.getUsername());
-				categoryElementsList = equipmentService.formCategoryElementList();
+				equipmentCategoryList = equipmentService.formCategoryElementList();
 				equipmentList = equipmentService.formEquipmentList(line);
 
 				model.addAttribute("user", user);
-				model.addAttribute("category", categoryElementsList);
+				model.addAttribute("category", equipmentCategoryList);
 				model.addAttribute("equipment", equipmentList);
 
 			} catch (ServiceException | LoginException e) {
@@ -84,10 +88,10 @@ public class UserController {
 	@RequestMapping(value = "user/add_to_cart", method = { RequestMethod.GET, RequestMethod.POST })
 	public String addToCart(@RequestParam("itemID") String itemID, Model model, Locale locale) {
 
-		cart.addItem(itemID);
+		cart.addEquipment(itemID);
 
 		model.addAttribute("user", user);
-		model.addAttribute("category", categoryElementsList);
+		model.addAttribute("category", equipmentCategoryList);
 		model.addAttribute("equipment", equipmentList);
 
 		return "user_page";
@@ -97,8 +101,8 @@ public class UserController {
 	public String userCart(Model model, Locale locale) {
 
 		try {
-			cartList = equipmentService.formCartEquipmentList(cart.getCart());
-			model.addAttribute("cart", cartList);
+			cartEquipmentList = equipmentService.formCartEquipmentList(cart.getCart());
+			model.addAttribute("cart", cartEquipmentList);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -109,11 +113,11 @@ public class UserController {
 	@RequestMapping(value = "user/delete_item", method = { RequestMethod.GET, RequestMethod.POST })
 	public String deleteItem(@RequestParam("itemID") String itemID, Model model, Locale locale) {
 
-		cart.removeItem(itemID);
+		cart.removeEquipment(itemID);
 
 		try {
-			cartList = equipmentService.formCartEquipmentList(cart.getCart());
-			model.addAttribute("cart", cartList);
+			cartEquipmentList = equipmentService.formCartEquipmentList(cart.getCart());
+			model.addAttribute("cart", cartEquipmentList);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -129,8 +133,8 @@ public class UserController {
 		
 		try {
 			equipmentService.rentItem(userID, itemID, days);
-			cartList = equipmentService.formCartEquipmentList(cart.getCart());
-			model.addAttribute("cart", cartList);
+			cartEquipmentList = equipmentService.formCartEquipmentList(cart.getCart());
+			model.addAttribute("cart", cartEquipmentList);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}

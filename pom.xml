@@ -17,6 +17,7 @@
 		<sqlite-jdbc-version>3.16.1</sqlite-jdbc-version>
 		<commons-dbcp-version>1.4</commons-dbcp-version>
 		<spring.security.version>4.2.3.RELEASE</spring.security.version>
+		<aop.aspectjweaver.version>1.8.10</aop.aspectjweaver.version>
 	</properties>
 
 	<dependencies>
@@ -48,7 +49,7 @@
 			<version>${commons-dbcp-version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+		<!-- spring-jdbc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
@@ -68,6 +69,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aop.aspectjweaver.version}</version>
+        </dependency>
 
 		<!-- Spring Security -->
 		<dependency>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<bean id="serviceLocator" class="by.shop.rent.service.factory.ServiceFactory"></bean>
+<bean id="daoLocator" class="by.shop.rent.dao.factory.DAOFactory"></bean>
+	
+<bean id="clientService"
+	factory-bean="serviceLocator"
+	factory-method="getClientServiceImpl">
+</bean>
+
+<bean id="equipmentService"
+	factory-bean="serviceLocator"
+	factory-method="getEquipmentServiceImpl">
+</bean>
+
+<bean id="clientDAO"
+	factory-bean="daoLocator"
+	factory-method="getClientDAOImpl">
+</bean>
+
+<bean id="equipmentDAO"
+	factory-bean="daoLocator"
+	factory-method="getEquipmentDAOImpl">
+</bean>
+
+</beans>
