@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import by.shop.rent.beans.Item;
+import by.shop.rent.beans.Equipment;
 import by.shop.rent.dao.EquipmentDAO;
 import by.shop.rent.dao.exception.DAOException;
 import by.shop.rent.dao.exception.EquipmentAlreadyExistsException;
@@ -30,10 +30,10 @@ public class EquipmentServiceImpl implements EquipmentService {
 	}
 	
 	@Override
-	public List<Item> formCartEquipmentList (List<String> cart) throws ServiceException {
+	public void formCartEquipmentList () throws ServiceException {
 
 		try {
-			return equipmentDAO.findCartEquipment(cart);
+			equipmentDAO.findCartEquipment();
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
@@ -51,9 +51,9 @@ public class EquipmentServiceImpl implements EquipmentService {
 	}
 	
 	@Override
-	public List<Item> formEquipmentList(String category) throws ServiceException {
+	public List<Equipment> formEquipmentList(String category) throws ServiceException {
 		try {
-			List<Item> equipmentList = equipmentDAO.formEquipmentList(category);
+			List<Equipment> equipmentList = equipmentDAO.formEquipmentList(category);
 			return equipmentList;
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
@@ -61,7 +61,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 	}
 	
 	@Override
-	public List<Item> formUserEquipmentList(int clientId) throws ServiceException {
+	public List<Equipment> formUserEquipmentList(int clientId) throws ServiceException {
 		try {
 			return equipmentDAO.getUserEquipment(clientId);
 		} catch (DAOException e) {

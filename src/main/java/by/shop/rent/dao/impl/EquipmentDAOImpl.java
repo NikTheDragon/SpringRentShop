@@ -1,17 +1,20 @@
 package by.shop.rent.dao.impl;
 
-import by.shop.rent.beans.Item;
+import by.shop.rent.beans.Cart;
+import by.shop.rent.beans.Equipment;
 import by.shop.rent.dao.EquipmentDAO;
 import by.shop.rent.dao.exception.DAOException;
 import by.shop.rent.dao.exception.EquipmentAlreadyExistsException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,8 +33,13 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
+	@Resource(name = "cart") 
+	
 	@Autowired
-	Item item;
+	Cart cart;
+	
+	@Autowired
+	Equipment item;
 	
 	final String FORM_EQUIPMENT_DATA = "SELECT e.*, r.client_id,types.folder FROM equipment e LEFT OUTER JOIN rented_items r ON e.id=r.equipment_id,types WHERE e.type=types.type AND types.folder LIKE ?";
 	final String FORM_CATEGORY_LIST = "SELECT DISTINCT folder FROM types";
@@ -54,7 +62,7 @@ public class EquipmentDAOImpl implements EquipmentDAO {
     }
 
     @Override
-    public List<Item> getUserEquipment(int clientId) throws DAOException {
+    public List<Equipment> getUserEquipment(int clientId) throws DAOException {
         final int ID = 1;
         final int TYPE = 2;
         final int NAME = 3;
@@ -63,21 +71,22 @@ public class EquipmentDAOImpl implements EquipmentDAO {
         final int COST = 6;
         final int IMG = 7;
         
-        List<Item> userItems = jdbcTemplate.query(USER_ITEMS, new Object[] { clientId }, new RowMapper<Item>() {
+        List<Equipment> userItems = jdbcTemplate.query(USER_ITEMS, new Object[] { clientId }, new RowMapper<Equipment>() {
 
 			@Override
-			public Item mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Item item = new Item();
+			@Cacheable("items")
+			public Equipment mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Equipment eq = new Equipment();
 				
-				item.setId(rs.getInt(ID));
-				item.setName(rs.getString(NAME));
-				item.setType(rs.getString(TYPE));
-				item.setDescription(rs.getString(DESCRIPTION));
-				item.setManufacturer(rs.getString(MANUFACTURER));
-				item.setPrice(rs.getInt(COST));
-				item.setImg(rs.getString(IMG));
+				eq.setId(rs.getString(ID));
+				eq.setName(rs.getString(NAME));
+				eq.setType(rs.getString(TYPE));
+				eq.setDescription(rs.getString(DESCRIPTION));
+				eq.setManufacturer(rs.getString(MANUFACTURER));
+				eq.setPrice(rs.getInt(COST));
+				eq.setImg(rs.getString(IMG));
 				
-				return item;
+				return eq;
 			}
 		});
 
@@ -95,7 +104,7 @@ public class EquipmentDAOImpl implements EquipmentDAO {
     }
 
     @Override
-    public List<Item> findCartEquipment(List<String> cart) throws DAOException {
+    public void findCartEquipment() throws DAOException {
         final int ID = 1;
         final int TYPE = 2;
         final int NAME = 3;
@@ -103,32 +112,29 @@ public class EquipmentDAOImpl implements EquipmentDAO {
         final int MANUFACTURER = 5;
         final int COST = 6;
         final int IMG = 7;
-		
-        List<Item> items = new ArrayList<>();
         
 		try {
-			for (String id : cart) {
+			for (Equipment eq: cart.getCart()) {
 
-				item = jdbcTemplate.queryForObject(FORM_CART_LIST, new Object[] { id }, new RowMapper<Item>() {
+				item = jdbcTemplate.queryForObject(FORM_CART_LIST, new Object[] { eq.getId() }, new RowMapper<Equipment>() {
 
 					@Override
-					public Item mapRow(ResultSet rs, int rowNum) throws SQLException {
-						Item item = new Item();
+					@Cacheable("items")
+					public Equipment mapRow(ResultSet rs, int rowNum) throws SQLException {
+						eq.setId(rs.getString(ID));
+						eq.setName(rs.getString(NAME));
+						eq.setType(rs.getString(TYPE));
+						eq.setDescription(rs.getString(DESCRIPTION));
+						eq.setManufacturer(rs.getString(MANUFACTURER));
+						eq.setPrice(rs.getInt(COST));
+						eq.setImg(rs.getString(IMG));
 
-						item.setId(rs.getInt(ID));
-						item.setName(rs.getString(NAME));
-						item.setType(rs.getString(TYPE));
-						item.setDescription(rs.getString(DESCRIPTION));
-						item.setManufacturer(rs.getString(MANUFACTURER));
-						item.setPrice(rs.getInt(COST));
-						item.setImg(rs.getString(IMG));
-
-						return item;
+						simulateSlowService();
+						
+						return eq;
 					}
 				});
-				items.add(item);
 			}
-			return items;
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -136,8 +142,17 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 		}
 	}
 
+    private void simulateSlowService() {
+        try {
+            long time = 300L;
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    
 	@Override
-	public List<Item> formEquipmentList(String category) throws DAOException {
+	public List<Equipment> formEquipmentList(String category) throws DAOException {
 		final int ID = 1;
 		final int TYPE = 2;
 		final int NAME = 3;
@@ -147,13 +162,13 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 		final int IMG = 7;
 		final int CLIENT_ID = 8;
 		
-		List<Item> items = jdbcTemplate.query(FORM_EQUIPMENT_DATA, new Object[] { category }, new RowMapper<Item>() {
+		List<Equipment> items = jdbcTemplate.query(FORM_EQUIPMENT_DATA, new Object[] { category }, new RowMapper<Equipment>() {
 
 			@Override
-			public Item mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Item item = new Item();
+			public Equipment mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Equipment item = new Equipment();
 				
-				item.setId(rs.getInt(ID));
+				item.setId(rs.getString(ID));
 				item.setName(rs.getString(NAME));
 				item.setType(rs.getString(TYPE));
 				item.setDescription(rs.getString(DESCRIPTION));

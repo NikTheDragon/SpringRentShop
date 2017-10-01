@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
  */
 
 @Component("item")
-public class Item {
-	private int id;
+public class Equipment {
+	private String id;
 	private String name;
 	private String type;
 	private String description;
@@ -17,11 +17,11 @@ public class Item {
 	private String img;
 	private int owner;
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

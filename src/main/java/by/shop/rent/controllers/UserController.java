@@ -4,9 +4,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import by.shop.rent.beans.Cart;
-import by.shop.rent.beans.Item;
+import by.shop.rent.beans.Equipment;
 import by.shop.rent.beans.User;
 import by.shop.rent.service.ClientService;
 import by.shop.rent.service.EquipmentService;
@@ -27,16 +34,20 @@ import by.shop.rent.service.exception.LoginException;
 import by.shop.rent.service.exception.ServiceException;
 
 @Controller
+@EnableCaching
 @SessionAttributes("user")
 public class UserController {
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	
+	
+	
 	@Resource(name = "cart") 
 	
 	@Autowired
 	Cart cart;
 	
 	List<String> equipmentCategoryList;
-	List<Item> equipmentList;
-	List<Item> cartEquipmentList;
+	List<Equipment> equipmentList;
 
 	@Autowired
 	ClientService clientService;
@@ -76,7 +87,7 @@ public class UserController {
 	@RequestMapping(value = "/user/user_items", method = { RequestMethod.GET, RequestMethod.POST })
 	public String userItems(Model model, Locale locale) {
 		try {
-			List<Item> clientItems = equipmentService.formUserEquipmentList(user.getId());
+			List<Equipment> clientItems = equipmentService.formUserEquipmentList(user.getId());
 			model.addAttribute("items", clientItems);
 
 		} catch (Exception e) {
@@ -101,8 +112,11 @@ public class UserController {
 	public String userCart(Model model, Locale locale) {
 
 		try {
-			cartEquipmentList = equipmentService.formCartEquipmentList(cart.getCart());
-			model.addAttribute("cart", cartEquipmentList);
+			long startTime=System.currentTimeMillis();
+			System.out.println("begin cart.");
+			equipmentService.formCartEquipmentList();
+			System.out.println((System.currentTimeMillis()-startTime)+" end cart.");
+			model.addAttribute("cart", cart.getCart());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -116,8 +130,8 @@ public class UserController {
 		cart.removeEquipment(itemID);
 
 		try {
-			cartEquipmentList = equipmentService.formCartEquipmentList(cart.getCart());
-			model.addAttribute("cart", cartEquipmentList);
+			equipmentService.formCartEquipmentList();
+			model.addAttribute("cart", cart.getCart());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -133,8 +147,7 @@ public class UserController {
 		
 		try {
 			equipmentService.rentItem(userID, itemID, days);
-			cartEquipmentList = equipmentService.formCartEquipmentList(cart.getCart());
-			model.addAttribute("cart", cartEquipmentList);
+			model.addAttribute("cart", cart.getCart());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -149,7 +162,7 @@ public class UserController {
 		
 		try {
 			equipmentService.returnRentedEquipment(clientID, equipmentID);
-			List<Item> clientEquipment = equipmentService.formUserEquipmentList(user.getId());
+			List<Equipment> clientEquipment = equipmentService.formUserEquipmentList(user.getId());
 			model.addAttribute("items", clientEquipment);
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -157,4 +170,9 @@ public class UserController {
 		
 		return "user_items";
 	}
+	
+	@Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager("items");
+    }
 }

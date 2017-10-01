@@ -10,21 +10,36 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
 public class Cart {
-	private List<String> cart = new ArrayList<>();
+	private List<Equipment> cart = new ArrayList<>();
 
-	public List<String> getCart() {
+	public List<Equipment> getCart() {
 		return cart;
 	}
 
 	public void addEquipment(String equipmentID) {
-
-		if (!this.cart.contains(equipmentID)) {
-			this.cart.add(equipmentID);
+		boolean isExist = false;
+		for (Equipment equipment : cart) {
+			if (equipment.getId().equals(equipmentID)) {
+				isExist = false;
+			}
+		}
+		if (!isExist) {
+			Equipment equipment = new Equipment();
+			equipment.setId(equipmentID);
+			cart.add(equipment);
 		}
 	}
 
 	public void removeEquipment(String equipmentID) {
-		this.cart.remove(equipmentID);
+
+		for (Equipment equipment : cart) {
+			System.out.println("cartID=" + equipment.getId());
+			if (equipment.getId().equals(equipmentID)) {
+				System.out.println("deleting...");
+				this.cart.remove(equipment);
+				break;
+			}
+		}
 	}
 
 }
