@@ -1,6 +1,5 @@
 package by.shop.rent.dao.impl;
 
-import by.shop.rent.beans.Cart;
 import by.shop.rent.beans.Equipment;
 import by.shop.rent.dao.EquipmentDAO;
 import by.shop.rent.dao.exception.DAOException;
@@ -14,10 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,13 +29,8 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	@Resource(name = "cart") 
-	
-	@Autowired
-	Cart cart;
-	
-	@Autowired
-	Equipment item;
+	//@Autowired
+	//Equipment equipment;
 	
 	final String FORM_EQUIPMENT_DATA = "SELECT e.*, r.client_id,types.folder FROM equipment e LEFT OUTER JOIN rented_items r ON e.id=r.equipment_id,types WHERE e.type=types.type AND types.folder LIKE ?";
 	final String FORM_CATEGORY_LIST = "SELECT DISTINCT folder FROM types";
@@ -50,9 +41,7 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 
     @Override
     public void returnRentedEquipment(String clientID, String equipmentID) throws DAOException {
-
         try {
-            
         	jdbcTemplate.update(REMOVE_RENTED_ITEM, clientID, equipmentID);
 
         } catch (Exception e) {
@@ -63,36 +52,16 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 
     @Override
     public List<Equipment> getUserEquipment(int clientId) throws DAOException {
-        final int ID = 1;
-        final int TYPE = 2;
-        final int NAME = 3;
-        final int DESCRIPTION = 4;
-        final int MANUFACTURER = 5;
-        final int COST = 6;
-        final int IMG = 7;
-        
         List<Equipment> userItems = jdbcTemplate.query(USER_ITEMS, new Object[] { clientId }, new RowMapper<Equipment>() {
-
-			@Override
-			@Cacheable("items")
+        	
 			public Equipment mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Equipment eq = new Equipment();
-				
-				eq.setId(rs.getString(ID));
-				eq.setName(rs.getString(NAME));
-				eq.setType(rs.getString(TYPE));
-				eq.setDescription(rs.getString(DESCRIPTION));
-				eq.setManufacturer(rs.getString(MANUFACTURER));
-				eq.setPrice(rs.getInt(COST));
-				eq.setImg(rs.getString(IMG));
-				
-				return eq;
+				return getEquipment(rs);
 			}
 		});
 
 		return userItems;
 	}
-
+    
     @Override
     public void addRentedEquipment(String clientId, String equipmentId, String days) throws DAOException, EquipmentAlreadyExistsException {
     	try {
@@ -103,53 +72,25 @@ public class EquipmentDAOImpl implements EquipmentDAO {
     	}
     }
 
-    @Override
-    public void findCartEquipment() throws DAOException {
-        final int ID = 1;
-        final int TYPE = 2;
-        final int NAME = 3;
-        final int DESCRIPTION = 4;
-        final int MANUFACTURER = 5;
-        final int COST = 6;
-        final int IMG = 7;
-        
+	@Override
+	@Cacheable(value = "items", key = "#id")
+	public Equipment findCartEquipment(String id) throws DAOException {
 		try {
-			for (Equipment eq: cart.getCart()) {
+			Equipment equipment = jdbcTemplate.queryForObject(FORM_CART_LIST, new Object[] { id }, new RowMapper<Equipment>() {
 
-				item = jdbcTemplate.queryForObject(FORM_CART_LIST, new Object[] { eq.getId() }, new RowMapper<Equipment>() {
+				@Override
+				public Equipment mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return getEquipment(rs);
+				}
+			});
 
-					@Override
-					@Cacheable("items")
-					public Equipment mapRow(ResultSet rs, int rowNum) throws SQLException {
-						eq.setId(rs.getString(ID));
-						eq.setName(rs.getString(NAME));
-						eq.setType(rs.getString(TYPE));
-						eq.setDescription(rs.getString(DESCRIPTION));
-						eq.setManufacturer(rs.getString(MANUFACTURER));
-						eq.setPrice(rs.getInt(COST));
-						eq.setImg(rs.getString(IMG));
-
-						simulateSlowService();
-						
-						return eq;
-					}
-				});
-			}
-
+			return equipment;
+			
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new DAOException("Exception in findCartItems", e);
+			throw new DAOException("Exception in findCartEquipment", e);
 		}
 	}
-
-    private void simulateSlowService() {
-        try {
-            long time = 300L;
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
-    }
     
 	@Override
 	public List<Equipment> formEquipmentList(String category) throws DAOException {
@@ -166,18 +107,18 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 
 			@Override
 			public Equipment mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Equipment item = new Equipment();
+				Equipment eq = new Equipment();
 				
-				item.setId(rs.getString(ID));
-				item.setName(rs.getString(NAME));
-				item.setType(rs.getString(TYPE));
-				item.setDescription(rs.getString(DESCRIPTION));
-				item.setManufacturer(rs.getString(MANUFACTURER));
-				item.setPrice(rs.getInt(COST));
-				item.setImg(rs.getString(IMG));
-				item.setOwner(rs.getInt(CLIENT_ID));
+				eq.setId(rs.getString(ID));
+				eq.setName(rs.getString(NAME));
+				eq.setType(rs.getString(TYPE));
+				eq.setDescription(rs.getString(DESCRIPTION));
+				eq.setManufacturer(rs.getString(MANUFACTURER));
+				eq.setPrice(rs.getInt(COST));
+				eq.setImg(rs.getString(IMG));
+				eq.setOwner(rs.getInt(CLIENT_ID));
 				
-				return item;
+				return eq;
 			}
 		});
 
@@ -192,4 +133,27 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 
 		return categoryElements;
 	}
+	
+	public Equipment getEquipment(ResultSet rs) throws SQLException {
+    	final int ID = 1;
+        final int TYPE = 2;
+        final int NAME = 3;
+        final int DESCRIPTION = 4;
+        final int MANUFACTURER = 5;
+        final int COST = 6;
+        final int IMG = 7;
+        final int CLIENT_ID = 8;
+    	
+        Equipment equipment = new Equipment();
+        
+  		equipment.setId(rs.getString(ID));
+		equipment.setName(rs.getString(NAME));
+		equipment.setType(rs.getString(TYPE));
+		equipment.setDescription(rs.getString(DESCRIPTION));
+		equipment.setManufacturer(rs.getString(MANUFACTURER));
+		equipment.setPrice(rs.getInt(COST));
+		equipment.setImg(rs.getString(IMG));
+		
+		return equipment;
+    }
 }

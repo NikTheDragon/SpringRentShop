@@ -1,26 +1,33 @@
 package by.shop.rent.beans;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component ("cart")
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "session")
 public class Cart {
-	private List<Equipment> cart = new ArrayList<>();
+	private Set<String> idCart = new HashSet<>();
+	private Set<Equipment> equipmentCart = new HashSet<>();
 
-	public List<Equipment> getCart() {
-		return cart;
+	public Set<String> getIdCart() {
+		return idCart;
+	}
+	
+	public Set<Equipment> getEquipmentCart() {
+		return equipmentCart;
 	}
 
-	public void addEquipment(String equipmentID) {
+/*	public void addEquipment(String equipmentID) {
 		boolean isExist = false;
 		for (Equipment equipment : cart) {
 			if (equipment.getId().equals(equipmentID)) {
-				isExist = false;
+				isExist = true;
 			}
 		}
 		if (!isExist) {
@@ -28,15 +35,22 @@ public class Cart {
 			equipment.setId(equipmentID);
 			cart.add(equipment);
 		}
+	}*/
+	
+	public void addEquipment (Equipment equipment) {
+		equipmentCart.add(equipment);
 	}
 
+	public void addID (String id) {
+		idCart.add(id);
+	}
+	
 	public void removeEquipment(String equipmentID) {
-
-		for (Equipment equipment : cart) {
-			System.out.println("cartID=" + equipment.getId());
+		idCart.remove(equipmentID);
+		
+		for (Equipment equipment : equipmentCart) {
 			if (equipment.getId().equals(equipmentID)) {
-				System.out.println("deleting...");
-				this.cart.remove(equipment);
+				equipmentCart.remove(equipment);
 				break;
 			}
 		}

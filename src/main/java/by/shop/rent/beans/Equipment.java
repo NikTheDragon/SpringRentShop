@@ -80,5 +80,4 @@ public class Equipment {
 	public void setOwner(int owner) {
 		this.owner = owner;
 	}
-
 }

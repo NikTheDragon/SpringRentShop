@@ -11,7 +11,7 @@ public interface EquipmentDAO {
 	void returnRentedEquipment(String clientId, String equipmentId) throws DAOException;
 	List<Equipment> getUserEquipment (int clientId) throws DAOException;
 	void addRentedEquipment(String clientId, String equipmentId, String days) throws DAOException, EquipmentAlreadyExistsException;
-	void findCartEquipment() throws DAOException;
+	Equipment findCartEquipment(String id) throws DAOException;
 	List<Equipment> formEquipmentList(String category) throws DAOException;
 	List<String> formCategoryElementsList() throws DAOException;
 	

@@ -9,11 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,9 +36,6 @@ import by.shop.rent.service.exception.ServiceException;
 @SessionAttributes("user")
 public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-	
-	
-	
 	@Resource(name = "cart") 
 	
 	@Autowired
@@ -99,7 +94,7 @@ public class UserController {
 	@RequestMapping(value = "user/add_to_cart", method = { RequestMethod.GET, RequestMethod.POST })
 	public String addToCart(@RequestParam("itemID") String itemID, Model model, Locale locale) {
 
-		cart.addEquipment(itemID);
+		cart.addID(itemID);
 
 		model.addAttribute("user", user);
 		model.addAttribute("category", equipmentCategoryList);
@@ -115,8 +110,8 @@ public class UserController {
 			long startTime=System.currentTimeMillis();
 			System.out.println("begin cart.");
 			equipmentService.formCartEquipmentList();
-			System.out.println((System.currentTimeMillis()-startTime)+" end cart.");
-			model.addAttribute("cart", cart.getCart());
+			System.out.println("end cart. Elapsed time " + (System.currentTimeMillis()-startTime));
+			model.addAttribute("cart", cart.getEquipmentCart());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -131,7 +126,7 @@ public class UserController {
 
 		try {
 			equipmentService.formCartEquipmentList();
-			model.addAttribute("cart", cart.getCart());
+			model.addAttribute("cart", cart.getEquipmentCart());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -147,7 +142,7 @@ public class UserController {
 		
 		try {
 			equipmentService.rentItem(userID, itemID, days);
-			model.addAttribute("cart", cart.getCart());
+			model.addAttribute("cart", cart.getEquipmentCart());
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -171,8 +166,4 @@ public class UserController {
 		return "user_items";
 	}
 	
-	@Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("items");
-    }
 }

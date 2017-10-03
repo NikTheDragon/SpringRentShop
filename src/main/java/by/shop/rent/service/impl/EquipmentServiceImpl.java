@@ -1,10 +1,12 @@
 package by.shop.rent.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import by.shop.rent.beans.Cart;
 import by.shop.rent.beans.Equipment;
 import by.shop.rent.dao.EquipmentDAO;
 import by.shop.rent.dao.exception.DAOException;
@@ -14,6 +16,8 @@ import by.shop.rent.service.exception.ServiceException;
 
 @Service
 public class EquipmentServiceImpl implements EquipmentService {
+	@Autowired
+	Cart cart;
 	
 	@Autowired
 	EquipmentDAO equipmentDAO;
@@ -31,9 +35,11 @@ public class EquipmentServiceImpl implements EquipmentService {
 	
 	@Override
 	public void formCartEquipmentList () throws ServiceException {
-
 		try {
-			equipmentDAO.findCartEquipment();
+			for (String id: cart.getIdCart()) {
+				Equipment eq = equipmentDAO.findCartEquipment(id);
+				cart.addEquipment(eq);
+			}
 		} catch (DAOException e) {
 			throw new ServiceException(e.getMessage(), e);
 		}
