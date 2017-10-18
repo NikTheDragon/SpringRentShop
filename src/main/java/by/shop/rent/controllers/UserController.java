@@ -40,9 +40,6 @@ public class UserController {
 	
 	@Autowired
 	Cart cart;
-	
-	List<String> equipmentCategoryList;
-	List<Equipment> equipmentList;
 
 	@Autowired
 	ClientService clientService;
@@ -64,12 +61,10 @@ public class UserController {
 
 			try {
 				user = clientService.getUserInfo(userDetail.getUsername());
-				equipmentCategoryList = equipmentService.formCategoryElementList();
-				equipmentList = equipmentService.formEquipmentList(line);
 
 				model.addAttribute("user", user);
-				model.addAttribute("category", equipmentCategoryList);
-				model.addAttribute("equipment", equipmentList);
+				model.addAttribute("category", equipmentService.formCategoryElementList());
+				model.addAttribute("equipment", equipmentService.formEquipmentList(line));
 
 			} catch (ServiceException | LoginException e) {
 				e.printStackTrace();
@@ -86,20 +81,25 @@ public class UserController {
 			model.addAttribute("items", clientItems);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return "user_items";
 	}
 
 	@RequestMapping(value = "user/add_to_cart", method = { RequestMethod.GET, RequestMethod.POST })
-	public String addToCart(@RequestParam("itemID") String itemID, Model model, Locale locale) {
+	public String addToCart(@RequestParam("itemID") String itemID,
+							@RequestParam("line") String line, Model model, Locale locale) {
 
 		cart.addID(itemID);
-
-		model.addAttribute("user", user);
-		model.addAttribute("category", equipmentCategoryList);
-		model.addAttribute("equipment", equipmentList);
-
+		try {
+			model.addAttribute("user", user);
+			model.addAttribute("category", equipmentService.formCategoryElementList());
+			model.addAttribute("equipment", equipmentService.formEquipmentList(line));
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		
 		return "user_page";
 	}
 

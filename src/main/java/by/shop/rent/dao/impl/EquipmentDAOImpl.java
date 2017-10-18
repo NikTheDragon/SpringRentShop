@@ -142,7 +142,6 @@ public class EquipmentDAOImpl implements EquipmentDAO {
         final int MANUFACTURER = 5;
         final int COST = 6;
         final int IMG = 7;
-        final int CLIENT_ID = 8;
     	
         Equipment equipment = new Equipment();
         

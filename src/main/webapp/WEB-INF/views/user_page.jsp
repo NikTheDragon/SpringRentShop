@@ -13,6 +13,7 @@
 </head>
 <body>
 
+	
 	<jsp:include page="shop_logo.jsp">
 		<jsp:param name="active_main_button" value="false" />
 	</jsp:include>
@@ -28,7 +29,9 @@
 						<c:forEach var="line" items="${category}">
 							<option value="${line}">${line}</option>
 						</c:forEach>
-					</select> 
+						<c:set var = "category_line" scope = "session" value = "${param.line}"/> 
+					</select>
+					
 					<input class="new" type="submit" value="выбрать" />
 				</form>
 			</td>
@@ -50,8 +53,9 @@
 					<tr align="center">
 						<td colspan="3" width="80%">${field.description}</td>
 						<td>
-							<form action="add_to_cart" method="POST">
+							<form action="add_to_cart" method="GET">
 							<c:if test = "${field.owner == '0'}">
+								<input type="hidden" name="line" value="${category_line}">
 								<input type="image" name="itemID" value="${field.id}" src="<c:url value="/resources/img/icon_cart.gif"/>"width="32" height="32">
 							</c:if>
 							<c:if test = "${field.owner != '0'}">
