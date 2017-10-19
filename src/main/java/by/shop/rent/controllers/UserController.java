@@ -172,4 +172,26 @@ public class UserController {
 		return "map";
 	}
 	
+	@RequestMapping(value = "user/about", method = { RequestMethod.GET, RequestMethod.POST })
+	public String about(Locale locale, Model model) {
+
+		return "about";
+	}
+	
+	@RequestMapping(value = "user/catalogue", method = { RequestMethod.GET, RequestMethod.POST })
+	public String catalogue(@RequestParam(value = "line", defaultValue = "%", required = false) String line, Locale locale, Model model) {
+		try {
+			model.addAttribute("category", equipmentService.formCategoryElementList());
+			model.addAttribute("equipment", equipmentService.formEquipmentList(line));
+			
+		} catch (ServiceException e) {
+			model.addAttribute("message", e.getCause());
+			logger.error(e.getMessage(), e);
+			
+			return "error_page";
+		}
+
+		return "catalogue";
+	}
+
 }

@@ -10,6 +10,7 @@
     <title>shop logo page</title>
     
     <spring:message code="main_button" var="main"/>
+    <spring:message code="catalogue" var="catalogue"/>
     <spring:message code="logo_map" var="logo_map"/>
     <spring:message code="logo_about" var="logo_about"/>
     
@@ -33,7 +34,7 @@
 
 <table border="0" bgcolor="f0f0f0" width="100%">
     <tr align="center" valign="top">
-        <td width="33%" height="32">
+        <td width="25%" height="32">
         <c:choose>
         	<c:when test="${param.active_main_button == 'false'}">
         		<input class="old" type="submit" value="${main}" style="width: 150Px">
@@ -45,8 +46,21 @@
        		</c:otherwise>
         </c:choose>
         </td>
+        
+        <td width="25%" height="32">
+        <c:choose>
+        	<c:when test="${param.active_catalogue_button == 'false'}">
+        		<input class="old" type="submit" value="${catalogue}" style="width: 150Px">
+        	</c:when>
+        	<c:otherwise>
+            	<form:form action="catalogue">
+            	    <input class="new" type="submit" value="${catalogue}" style="width: 150Px">
+            	</form:form>
+       		</c:otherwise>
+        </c:choose>
+        </td>
 		
-		<td width="33%" height="32">
+		<td width="25%" height="32">
         <c:choose>
         	<c:when test="${param.active_map_button == 'false'}">
         		<input class="old" type="submit" value="${logo_map}" style="width: 150Px">
@@ -59,13 +73,13 @@
         </c:choose>
         </td>
 		
-		<td width="33%" height="32">
+		<td width="25%" height="32">
         <c:choose>
         	<c:when test="${param.active_about_button == 'false'}">
         		<input class="old" type="submit" value="${logo_about}" style="width: 150Px">
         	</c:when>
         	<c:otherwise>
-            	<form:form action="index">
+            	<form:form action="about">
             	    <input class="new" type="submit" value="${logo_about}" style="width: 150Px">
             	</form:form>
        		</c:otherwise>

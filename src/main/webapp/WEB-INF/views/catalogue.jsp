@@ -8,14 +8,13 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Client page</title>
+	<title>Catalogue page</title>
 	<link href="<c:url value="/resources/css/mix.css"/>" rel="stylesheet">
 </head>
 <body>
 
 	
 	<jsp:include page="shop_logo.jsp">
-		<jsp:param name="active_main_button" value="false" />
 		<jsp:param name="active_catalogue_button" value="false" />
 	</jsp:include>
 
@@ -24,7 +23,7 @@
 	<table border="0" bgcolor="ffffff" width="100%">
 		<tr align="center">
 			<td>Категория:
-				<form action="user_page" method="get">
+				<form action="catalogue" method="get">
 					<select name="line" size="1">
 						<option value="%">*</option>
 						<c:forEach var="line" items="${category}">
@@ -56,8 +55,7 @@
 						<td>
 							<form action="add_to_cart" method="GET">
 							<c:if test = "${field.owner == '0'}">
-								<input type="hidden" name="line" value="${category_line}">
-								<input type="image" name="itemID" value="${field.id}" src="<c:url value="/resources/img/icon_cart.gif"/>"width="32" height="32">
+								<p align="center">В наличии</p>
 							</c:if>
 							<c:if test = "${field.owner != '0'}">
 								 <p align="center">Товар недоступен</p>
@@ -69,11 +67,7 @@
 				<br>
 			</c:forEach>
 			</td>
-			
-        <jsp:include page="right_menu.jsp">
-        	<jsp:param name="linked_page" value="client_page" />
-        </jsp:include>
-        
+       
     </tr>
 </table>
 	

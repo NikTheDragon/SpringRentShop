@@ -14,6 +14,7 @@
 
 <jsp:include page="shop_logo.jsp">
 	<jsp:param name="active_main_button" value="true" />
+	<jsp:param name="active_catalogue_button" value="false" />
 </jsp:include>
 	
 	<br>
