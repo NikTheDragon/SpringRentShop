@@ -45,8 +45,33 @@
        		</c:otherwise>
         </c:choose>
         </td>
-        <td width="33%"><p>${logo_map}</p></td>
-        <td width="33%"><p>${logo_about}</p></td>
+		
+		<td width="33%" height="32">
+        <c:choose>
+        	<c:when test="${param.active_map_button == 'false'}">
+        		<input class="old" type="submit" value="${logo_map}" style="width: 150Px">
+        	</c:when>
+        	<c:otherwise>
+            	<form:form action="map">
+            	    <input class="new" type="submit" value="${logo_map}" style="width: 150Px">
+            	</form:form>
+       		</c:otherwise>
+        </c:choose>
+        </td>
+		
+		<td width="33%" height="32">
+        <c:choose>
+        	<c:when test="${param.active_about_button == 'false'}">
+        		<input class="old" type="submit" value="${logo_about}" style="width: 150Px">
+        	</c:when>
+        	<c:otherwise>
+            	<form:form action="index">
+            	    <input class="new" type="submit" value="${logo_about}" style="width: 150Px">
+            	</form:form>
+       		</c:otherwise>
+        </c:choose>
+        </td>
+
     </tr>
 </table>
 

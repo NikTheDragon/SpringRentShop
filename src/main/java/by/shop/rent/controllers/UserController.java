@@ -166,4 +166,10 @@ public class UserController {
 		return "user_items";
 	}
 	
+	@RequestMapping(value = "user/map", method = { RequestMethod.GET, RequestMethod.POST })
+	public String map(Locale locale, Model model) {
+
+		return "map";
+	}
+	
 }

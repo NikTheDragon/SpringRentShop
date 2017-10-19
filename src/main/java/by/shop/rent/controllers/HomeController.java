@@ -16,7 +16,7 @@ public class HomeController {
 
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String home(Locale locale, Model model) {
-		
+
 		return "index";
 	}
 
@@ -25,10 +25,17 @@ public class HomeController {
 
 		return "index";
 	}
-	
+
+	@RequestMapping(value = "/map", method = { RequestMethod.GET, RequestMethod.POST })
+	public String map(Locale locale, Model model) {
+
+		return "map";
+	}
+
 	@RequestMapping(value = "/403", method = RequestMethod.GET)
-	public String accesssDenied() {
-	
-	  return "403";
+	public String accesssDenied(Locale locale, Model model) {
+		model.addAttribute("message", "login_incorrect");
+		
+		return "index";
 	}
 }
