@@ -53,7 +53,7 @@ public class HomeController {
 			model.addAttribute("equipment", equipmentService.formEquipmentList(line));
 			
 		} catch (ServiceException e) {
-			model.addAttribute("message", e.getCause());
+			model.addAttribute("message", e.getMessage());
 			logger.error(e.getMessage(), e);
 			
 			return "error_page";

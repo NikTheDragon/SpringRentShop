@@ -128,10 +128,15 @@ public class EquipmentDAOImpl implements EquipmentDAO {
 	@Override
 	public List<String> formCategoryElementsList() throws DAOException {
 		List<String> categoryElements = new ArrayList<>();
-
-		categoryElements = jdbcTemplate.queryForList(FORM_CATEGORY_LIST, String.class);
-
-		return categoryElements;
+		try {
+			categoryElements = jdbcTemplate.queryForList(FORM_CATEGORY_LIST, String.class);
+			
+			return categoryElements;
+			
+		} catch (Exception e) {
+			throw new DAOException("exception in DAO formCategoryElementsList", e);
+		}
+		
 	}
 	
 	public Equipment getEquipment(ResultSet rs) throws SQLException {

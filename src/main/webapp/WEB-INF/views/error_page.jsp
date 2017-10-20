@@ -10,7 +10,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Sport Equipment Rent Shop</title>
+    <title>Error page</title>
     <link href="<c:url value="/resources/css/mix.css"/>" rel="stylesheet">
 
     <spring:message code="main_button" var="main"/>
@@ -22,6 +22,7 @@
 <body>
 
 <jsp:include page="shop_logo.jsp">
+	<jsp:param name="active_catalogue_button" value="true" />
 </jsp:include>
 
 <br>
@@ -29,6 +30,7 @@
 	<table border="0" width="100%">
 		<tr>
 			<td>
+				<p><h1>Error page</h1></p>
 				<p>${message}</p>
 			</td>
 		</tr>

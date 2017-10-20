@@ -67,7 +67,10 @@ public class UserController {
 				model.addAttribute("equipment", equipmentService.formEquipmentList(line));
 
 			} catch (ServiceException | LoginException e) {
-				e.printStackTrace();
+				model.addAttribute("message", e.getMessage());
+				logger.error(e.getMessage(), e);
+				
+				return "error_page";
 			}
 		}
 
@@ -81,7 +84,10 @@ public class UserController {
 			model.addAttribute("items", clientItems);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			model.addAttribute("message", e.getMessage());
+			logger.error(e.getMessage(), e);
+			
+			return "error_page";
 		}
 
 		return "user_items";
@@ -96,8 +102,12 @@ public class UserController {
 			model.addAttribute("user", user);
 			model.addAttribute("category", equipmentService.formCategoryElementList());
 			model.addAttribute("equipment", equipmentService.formEquipmentList(line));
+			
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			model.addAttribute("message", e.getMessage());
+			logger.error(e.getMessage(), e);
+			
+			return "error_page";
 		}
 		
 		return "user_page";
@@ -112,8 +122,12 @@ public class UserController {
 			equipmentService.formCartEquipmentList();
 			System.out.println("end cart. Elapsed time " + (System.currentTimeMillis()-startTime));
 			model.addAttribute("cart", cart.getEquipmentCart());
+			
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			model.addAttribute("message", e.getMessage());
+			logger.error(e.getMessage(), e);
+			
+			return "error_page";
 		}
 
 		return "user_cart";
@@ -127,8 +141,12 @@ public class UserController {
 		try {
 			equipmentService.formCartEquipmentList();
 			model.addAttribute("cart", cart.getEquipmentCart());
+			
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			model.addAttribute("message", e.getMessage());
+			logger.error(e.getMessage(), e);
+			
+			return "error_page";
 		}
 
 		return "user_cart";
@@ -143,8 +161,12 @@ public class UserController {
 		try {
 			equipmentService.rentItem(userID, itemID, days);
 			model.addAttribute("cart", cart.getEquipmentCart());
+			
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			model.addAttribute("message", e.getMessage());
+			logger.error(e.getMessage(), e);
+			
+			return "error_page";
 		}
 
 		return "user_cart";
@@ -159,8 +181,12 @@ public class UserController {
 			equipmentService.returnRentedEquipment(clientID, equipmentID);
 			List<Equipment> clientEquipment = equipmentService.formUserEquipmentList(user.getId());
 			model.addAttribute("items", clientEquipment);
+			
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			model.addAttribute("message", e.getMessage());
+			logger.error(e.getMessage(), e);
+			
+			return "error_page";
 		}
 		
 		return "user_items";
