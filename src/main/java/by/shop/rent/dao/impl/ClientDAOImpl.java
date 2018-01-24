@@ -31,7 +31,8 @@ public class ClientDAOImpl implements ClientDAO {
 
 	final String COUNT_CLIENTS = "SELECT COUNT(*) FROM clients WHERE login = ?";
 	final String GET_CLIENT_INFORMATION = "SELECT * FROM clients WHERE login=?";
-	final String ADD_CLIENT = "INSERT INTO clientsss (name,surname,email,phone,login,password,status) VALUES (?,?,?,?,?,?,?)";
+	final String ADD_CLIENT = "INSERT INTO clients (name,surname,email,phone,login,password,status) VALUES (?,?,?,?,?,?,?)";
+	final String UPDATE_USER = "UPDATE clients SET name=?,surname=?,email=?,phone=?,login=?,password=? WHERE id=?";
 
 	@Override
 	public boolean isClientExist(String login) throws DAOException {
@@ -83,10 +84,23 @@ public class ClientDAOImpl implements ClientDAO {
 		System.out.println("adding new client");
 		try {
 			jdbcTemplate.update(ADD_CLIENT, user.getName(), user.getSurname(), user.getEmail(), user.getPhone(),
-					user.getLogin(), user.getPassword(), "user");
+					user.getLogin(), user.getPassword(), "ROLE_USER");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			throw new DAOException("Exception in addNewClient", e);
+		}
+	}
+	
+	@Override
+	public void updateUserData(User user) throws DAOException {
+		System.out.println("updating client "+user.getName()+" id "+user.getId());
+		try {
+			jdbcTemplate.update(UPDATE_USER, user.getName(), user.getSurname(), user.getEmail(), user.getPhone(),
+					user.getLogin(), user.getPassword(), user.getId());
+		} catch (Exception e) {
+			System.out.println(e);
+			System.out.println(e.getMessage());
+			throw new DAOException("Exception in updateUser", e);
 		}
 	}
 

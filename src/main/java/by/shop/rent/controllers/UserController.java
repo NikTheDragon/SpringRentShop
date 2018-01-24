@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 import org.springframework.cache.annotation.EnableCaching;
 
@@ -18,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,13 +43,13 @@ public class UserController {
 	
 	@Autowired
 	Cart cart;
-
+	
 	@Autowired
 	ClientService clientService;
 
 	@Autowired
 	EquipmentService equipmentService;
-
+	
 	@Autowired
 	User user;
 
@@ -78,9 +81,9 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/user/user_items", method = { RequestMethod.GET, RequestMethod.POST })
-	public String userItems(Model model, Locale locale) {
+	public String userItems(@RequestParam("userID") int userID, Model model, Locale locale) {
 		try {
-			List<Equipment> clientItems = equipmentService.formUserEquipmentList(user.getId());
+			List<Equipment> clientItems = equipmentService.formUserEquipmentList(userID);
 			model.addAttribute("items", clientItems);
 
 		} catch (Exception e) {
@@ -95,9 +98,10 @@ public class UserController {
 
 	@RequestMapping(value = "user/add_to_cart", method = { RequestMethod.GET, RequestMethod.POST })
 	public String addToCart(@RequestParam("itemID") String itemID,
-							@RequestParam("line") String line, Model model, Locale locale) {
+							@RequestParam(value = "line", defaultValue = "%", required = false) String line, Model model, Locale locale) {
 
 		cart.addID(itemID);
+		
 		try {
 			model.addAttribute("user", user);
 			model.addAttribute("category", equipmentService.formCategoryElementList());
@@ -175,12 +179,12 @@ public class UserController {
 	@RequestMapping(value="user/return_equipment",  method = { RequestMethod.GET, RequestMethod.POST })
 	public String returnEquipment(@RequestParam Map<String, String> requestParams, Model model, Locale locale){
 		String equipmentID = requestParams.get("equipmentID");
-		String clientID = requestParams.get("clientID");
+		String userID = requestParams.get("clientID");
 		
 		try {
-			equipmentService.returnRentedEquipment(clientID, equipmentID);
-			List<Equipment> clientEquipment = equipmentService.formUserEquipmentList(user.getId());
-			model.addAttribute("items", clientEquipment);
+			equipmentService.returnRentedEquipment(userID, equipmentID);
+			List<Equipment> userEquipment = equipmentService.formUserEquipmentList(Integer.parseInt(userID));
+			model.addAttribute("items", userEquipment);
 			
 		} catch (ServiceException e) {
 			model.addAttribute("message", e.getMessage());
@@ -218,6 +222,30 @@ public class UserController {
 		}
 
 		return "catalogue";
+	}
+	
+	@RequestMapping(value = "user/user_info", method = { RequestMethod.GET, RequestMethod.POST })
+	public String userInfo(Locale locale, Model model) {
+
+		return "user_info";
+	}
+	
+	@RequestMapping(value = "user/update_user", method = { RequestMethod.GET, RequestMethod.POST })
+	public String updateUser(@Valid @ModelAttribute("user") @Autowired User user, BindingResult bindingResult, Locale locale, Model model) {
+
+		if (!bindingResult.hasErrors()) {
+			try {
+				clientService.updateUserInfo(user);
+				bindingResult.rejectValue("message", "update done", "update done");
+			} catch (ServiceException e) {
+				model.addAttribute("message", e.getCause());
+				logger.error(e.getMessage(), e);
+				
+				return "error_page";
+			}
+		}
+		
+		return "user_info";
 	}
 
 }

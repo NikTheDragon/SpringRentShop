@@ -54,16 +54,13 @@ public class ClientServiceImpl implements ClientService{
 		}
 	}
 	
-	/*private boolean isEmptyFieldExist (ClientData clientData) {
-		if (clientData.getName().equals("") | 
-				clientData.getSurname().equals("") |
-				clientData.getEmail().equals("") |
-				clientData.getPhone().equals("") |
-				clientData.getLogin().equals("") |
-				clientData.getPassword().equals("")) {
-			return true;
+	@Override
+	public void updateUserInfo(User user) throws ServiceException {
+		try {
+			clientDAO.updateUserData(user);
+		} catch (DAOException e) {
+			throw new ServiceException(e.getMessage(), e);
 		}
-		return false;
-	}*/
+	}
 
 }

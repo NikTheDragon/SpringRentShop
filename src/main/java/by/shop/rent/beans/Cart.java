@@ -1,8 +1,7 @@
 package by.shop.rent.beans;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.context.annotation.Scope;
@@ -38,7 +37,7 @@ public class Cart {
 	}*/
 	
 	public void addEquipment (Equipment equipment) {
-		equipmentCart.add(equipment);
+		equipmentCart.add(Objects.requireNonNull(equipment));
 	}
 
 	public void addID (String id) {

@@ -8,4 +8,5 @@ public interface ClientService {
 	User getUserInfo(String login) throws ServiceException, LoginException;
 	void checkLogin(String login) throws ServiceException, LoginException;
 	void registerClient() throws ServiceException;
+	void updateUserInfo(User user) throws ServiceException;
 }

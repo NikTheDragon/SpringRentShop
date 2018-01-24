@@ -17,9 +17,17 @@
         <p align="center">&nbsp;</p>
         <p align="center">Меню:</p>
         
-        <form action="Controller" method="post">
-            <p><input class="new" type="submit" name="B1" value="Личный кабинет" style="width: 120Px"></p>
-        </form> 
+        <c:choose>
+			<c:when test="${param.linked_page == 'user_info'}">
+				<p><input class="old" type="submit" name="B2" value="Личный кабинет" style="width: 120Px"></p>
+			</c:when>
+			<c:otherwise>
+				<form action="user_info" method="post">
+					<input type="hidden" name="client_id" value="${user.id}" />
+					<p><input class="new" type="submit" name="B2" value="Личный кабинет" style="width: 120Px"></p>
+				</form>
+			</c:otherwise>
+		</c:choose>
         
         <c:choose>
 			<c:when test="${param.linked_page == 'client_items'}">
@@ -27,7 +35,7 @@
 			</c:when>
 			<c:otherwise>
 				<form action="user_items" method="post">
-					<input type="hidden" name="client_id" value="${user.id}" />
+					<input type="hidden" name="userID" value="${user.id}" />
 					<p><input class="new" type="submit" name="B2" value="Мои товары" style="width: 120Px"></p>
 				</form>
 			</c:otherwise>

@@ -34,7 +34,7 @@
 			<p>Наш адрес: Ул. Якубова д 14</p>
 			<p>Проезд троллейбусом 36 или автобусом 127 до останвки Серебрянка 3</p>
 			<p>Телефон 8-029-0000000</p>
-			<img src="resources/img/map.jpg" />
+			<img src="<c:url value="/resources/img/map.jpg"/>" />
 			</td>
 		</tr>
 	</table>
